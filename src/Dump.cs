@@ -8,7 +8,7 @@ public class IdDump {
     private const string cubismUri = @"live2d/roles";
     private const string spineUri = @"roles";
     
-    private const string monsterSkinUrl = "https://raw.githubusercontent.com/St-Pavlov-Foundation/re1999-data/main/data/json/skin.json";
+    private const string monsterSkinUrl = "https://raw.githubusercontent.com/St-Pavlov-Foundation/re1999-data/main/data/json/monster_skin.json";
     private const string skinUrl = "https://raw.githubusercontent.com/St-Pavlov-Foundation/re1999-data/main/data/json/skin.json";
     private const string characterUrl = "https://raw.githubusercontent.com/St-Pavlov-Foundation/re1999-data/main/data/json/character.json";
     
@@ -27,7 +27,6 @@ public class IdDump {
         string monsterSkinData = monsterTask.Result;
         string skinData = skinTask.Result;
         string characterData = characterTask.Result;
-        
         if (monsterSkinData != null)
             monsterSkins = JsonConvert.DeserializeObject<List<MonsterSkin>>(monsterSkinData);
         else
