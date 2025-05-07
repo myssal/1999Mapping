@@ -67,9 +67,9 @@ public class IdDump {
                     characterSkin = skin.characterSkin,
                     characterSkinNameEng = skin.characterSkinNameEng,
                     skinDescription = skin.skinDescription,
-                    cubism = $"{baseUrl}/roles/{RemoveAfterSlash(skin.spine)}",
-                    spine = $"{baseUrl}/live2d/roles/{RemoveAfterSlash(skin.cubism)}",
-                    alternateSpine = $"{baseUrl}/roles/{RemoveAfterSlash(skin.alternateSpine)}"
+                    cubism = $"{baseUrl}/roles/{Helper.RemoveAfterSlash(skin.spine, baseUrl)}",
+                    spine = $"{baseUrl}/live2d/roles/{Helper.RemoveAfterSlash(skin.cubism, baseUrl)}",
+                    alternateSpine = $"{baseUrl}/roles/{Helper.RemoveAfterSlash(skin.alternateSpine, baseUrl)}"
                 });
             }
             
@@ -86,6 +86,7 @@ public class IdDump {
         
         string json = JsonConvert.SerializeObject(arcanistMap, Formatting.Indented);
         File.WriteAllText(outputFile, json);
+        Console.WriteLine($"Generated arcanist map -> {outputFile}");
     }
 
     public void GenerateGeneralMap(string outputFile)
@@ -100,18 +101,19 @@ public class IdDump {
                 name = monsterSkin.name,
                 nameEng = monsterSkin.nameEng,
                 des = monsterSkin.des,
-                spine = $"{baseUrl}/roles/{RemoveAfterSlash(monsterSkin.spine)}",
+                spine = $"{baseUrl}/roles/{Helper.RemoveAfterSlash(monsterSkin.spine, baseUrl)}",
                 headIcon = $"{baseUrl}/singlebg/headicon_monster/{monsterSkin.headIcon}.png"
             });
            }
         
         string json = JsonConvert.SerializeObject(generalMap, Formatting.Indented);
         File.WriteAllText(outputFile, json);
+        Console.WriteLine($"Generated general map -> {outputFile}");
     }
 
     public void GenerateStorySpriteMap(string outputFile)
     {
-        var result = new List<StorySpriteMap>();
+        var storySpriteMaps = new List<StorySpriteMap>();
 
         var matches = Regex.Matches(heroParamData, @"\{([^}]*)\}");
 
@@ -124,60 +126,21 @@ public class IdDump {
 
             if (values.Count < 16)
                 continue;
-            result.Add(new StorySpriteMap
+            storySpriteMaps.Add(new StorySpriteMap
             {
                 id = int.TryParse(values[0], out var idVal) ? idVal : 0,
                 nameEng = values[4],
                 name = values[3],
-                spine = ConvertSpine(values[12]),
-                alternateSpine = ConvertAlternateSpine(values[13]),
+                spine = Helper.ConvertSpine(values[12], baseUrl),
+                alternateSpine = Helper.ConvertAlternateSpine(values[13], baseUrl),
                 desc = values[15]
             });
         }
         
-        string json = JsonConvert.SerializeObject(result, Formatting.Indented);
+        string json = JsonConvert.SerializeObject(storySpriteMaps, Formatting.Indented);
         File.WriteAllText(outputFile, json);
+        Console.WriteLine($"Generated story spirte map -> {outputFile}");
     }
 
-    public static string ConvertAlternateSpine(string prefabPath)
-    {
-        if (string.IsNullOrWhiteSpace(prefabPath))
-            return "";
-        
-        string trimmedPath = prefabPath.Replace("\\", "/"); // Normalize slashes
-        
-        // Just remove trailing .prefab and prepend alt base URL
-        string noPrefab = Regex.Replace(trimmedPath, @"/[^/]+\.prefab$", "");
-        return $"{baseUrl}/live2d/roles/{noPrefab}";
-    }
-    public static string ConvertSpine(string prefabPath)
-    {
-        if (string.IsNullOrWhiteSpace(prefabPath))
-            return "";
-        
-        string trimmedPath = prefabPath.Replace("\\", "/"); // Normalize slashes
-
-        if (trimmedPath.Contains("Assets/ZResourcesLib/live2d/roles/"))
-        {
-            // Remove "Assets/ZResourcesLib"
-            string relativePath = trimmedPath.Replace("Assets/ZResourcesLib", "");
-            string noPrefab = Regex.Replace(relativePath, @"/[^/]+\.prefab$", "");
-            return $"{baseUrl}{noPrefab}";
-        }
-        else
-        {
-            // Just remove trailing .prefab and prepend alt base URL
-            string noPrefab = Regex.Replace(trimmedPath, @"/[^/]+\.prefab$", "");
-            return $"{baseUrl}/rolesstory/{noPrefab}";
-        }
-    }
     
-    public static string RemoveAfterSlash(string input)
-    {
-        if (string.IsNullOrWhiteSpace(input))
-            return "";
-
-        int index = input.IndexOf('/');
-        return index >= 0 ? input.Substring(0, index) : input;
-    }
 }

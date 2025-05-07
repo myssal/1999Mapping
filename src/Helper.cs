@@ -1,3 +1,5 @@
+using System.Text.RegularExpressions;
+
 namespace _1999IdDump;
 
 public class Helper
@@ -32,4 +34,42 @@ public class Helper
         Console.WriteLine($"File created at: {filePath}");
     }
     
+    public static string ConvertAlternateSpine(string prefabPath, string baseUrl)
+    {
+        if (string.IsNullOrWhiteSpace(prefabPath))
+            return "";
+        
+        string trimmedPath = prefabPath.Replace("\\", "/"); 
+        
+        string noPrefab = Regex.Replace(trimmedPath, @"/[^/]+\.prefab$", "");
+        return $"{baseUrl}/live2d/roles/{noPrefab}";
+    }
+    public static string ConvertSpine(string prefabPath, string baseUrl)
+    {
+        if (string.IsNullOrWhiteSpace(prefabPath))
+            return "";
+        
+        string trimmedPath = prefabPath.Replace("\\", "/"); // Normalize slashes
+
+        if (trimmedPath.Contains("Assets/ZResourcesLib/live2d/roles/"))
+        {
+            string relativePath = trimmedPath.Replace("Assets/ZResourcesLib", "");
+            string noPrefab = Regex.Replace(relativePath, @"/[^/]+\.prefab$", "");
+            return $"{baseUrl}{noPrefab}";
+        }
+        else
+        {
+            string noPrefab = Regex.Replace(trimmedPath, @"/[^/]+\.prefab$", "");
+            return $"{baseUrl}/rolesstory/{noPrefab}";
+        }
+    }
+    
+    public static string RemoveAfterSlash(string input, string baseUrl)
+    {
+        if (string.IsNullOrWhiteSpace(input))
+            return "";
+
+        int index = input.IndexOf('/');
+        return index >= 0 ? input.Substring(0, index) : input;
+    }
 }
