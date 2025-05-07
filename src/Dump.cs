@@ -5,7 +5,7 @@ using _1999IdDump.Template;
 using Newtonsoft.Json;
 
 public class IdDump {
-    private const string baseUrl = "https://github.com/myssal/Reverse-1999-CN-Asset";
+    private const string baseUrl = "https://github.com/myssal/Reverse-1999-CN-Asset/tree/master";
     private const string cubismUri = @"live2d/roles";
     private const string spineUri = @"roles";
     
@@ -69,9 +69,9 @@ public class IdDump {
                     characterSkin = skin.characterSkin,
                     characterSkinNameEng = skin.characterSkinNameEng,
                     skinDescription = skin.skinDescription,
-                    live2d = skin.live2d,
-                    spine = skin.spine,
-                    alternateSpine = skin.alternateSpine
+                    cubism = $"{baseUrl}/roles/{RemoveAfterSlash(skin.spine)}",
+                    spine = $"{baseUrl}/live2d/roles/{RemoveAfterSlash(skin.cubism)}",
+                    alternateSpine = $"{baseUrl}/roles/{RemoveAfterSlash(skin.alternateSpine)}"
                 });
             }
             
@@ -102,8 +102,8 @@ public class IdDump {
                 name = monsterSkin.name,
                 nameEng = monsterSkin.nameEng,
                 des = monsterSkin.des,
-                spine = monsterSkin.spine,
-                headIcon = monsterSkin.headIcon
+                spine = $"{baseUrl}/roles/{RemoveAfterSlash(monsterSkin.spine)}",
+                headIcon = $"{baseUrl}/singlebg/headicon_monster/{monsterSkin.headIcon}.png"
             });
            }
         
@@ -126,19 +126,60 @@ public class IdDump {
 
             if (values.Count < 16)
                 continue;
-
             result.Add(new StorySpriteMap
             {
                 id = int.TryParse(values[0], out var idVal) ? idVal : 0,
                 nameEng = values[4],
                 name = values[3],
-                spine = values[12],
-                alternateSpine = values[13],
+                spine = ConvertSpine(values[12]),
+                alternateSpine = ConvertAlternateSpine(values[13]),
                 desc = values[15]
             });
         }
         
         string json = JsonConvert.SerializeObject(result, Formatting.Indented);
         Helper.CreateFileWithFolders(outputFile, json);
+    }
+
+    public static string ConvertAlternateSpine(string prefabPath)
+    {
+        if (string.IsNullOrWhiteSpace(prefabPath))
+            return "";
+        
+        string trimmedPath = prefabPath.Replace("\\", "/"); // Normalize slashes
+        
+        // Just remove trailing .prefab and prepend alt base URL
+        string noPrefab = Regex.Replace(trimmedPath, @"/[^/]+\.prefab$", "");
+        return $"{baseUrl}/live2d/roles/{noPrefab}";
+    }
+    public static string ConvertSpine(string prefabPath)
+    {
+        if (string.IsNullOrWhiteSpace(prefabPath))
+            return "";
+        
+        string trimmedPath = prefabPath.Replace("\\", "/"); // Normalize slashes
+
+        if (trimmedPath.Contains("Assets/ZResourcesLib/live2d/roles/"))
+        {
+            // Remove "Assets/ZResourcesLib"
+            string relativePath = trimmedPath.Replace("Assets/ZResourcesLib", "");
+            string noPrefab = Regex.Replace(relativePath, @"/[^/]+\.prefab$", "");
+            return $"{baseUrl}{noPrefab}";
+        }
+        else
+        {
+            // Just remove trailing .prefab and prepend alt base URL
+            string noPrefab = Regex.Replace(trimmedPath, @"/[^/]+\.prefab$", "");
+            return $"{baseUrl}/rolesstory/{noPrefab}";
+        }
+    }
+    
+    public static string RemoveAfterSlash(string input)
+    {
+        if (string.IsNullOrWhiteSpace(input))
+            return "";
+
+        int index = input.IndexOf('/');
+        return index >= 0 ? input.Substring(0, index) : input;
     }
 }

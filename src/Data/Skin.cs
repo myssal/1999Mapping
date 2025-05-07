@@ -19,7 +19,7 @@ public class Skin
     [JsonProperty("frameStencilValue")] public string frameStencilValue { get; set; }
     [JsonProperty("cameraSize")] public int cameraSize { get; set; }
     [JsonProperty("drawing")] public string drawing { get; set; }
-    [JsonProperty("live2d")] public string live2d { get; set; }
+    [JsonProperty("live2d")] public string cubism { get; set; }
     [JsonProperty("live2dbg")] public string live2dbg { get; set; }
     [JsonProperty("verticalDrawing")] public string verticalDrawing { get; set; }
     [JsonProperty("spine")] public string spine { get; set; }
