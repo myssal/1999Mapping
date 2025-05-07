@@ -11,14 +11,17 @@ public class IdDump {
     private const string skinUrl = "https://raw.githubusercontent.com/St-Pavlov-Foundation/re1999-data/main/data/json/skin.json";
     private const string characterUrl = "https://raw.githubusercontent.com/St-Pavlov-Foundation/re1999-data/main/data/json/character.json";
     private const string heroParamUrl = "https://raw.githubusercontent.com/St-Pavlov-Foundation/re1999-data/main/data/lua/modules/configs/story/lua_story_heroparam.lua";
-    
-    
+
+    public string output { get; set; }
+
     public List<MonsterSkin> monsterSkins{ get; set; } = new List<MonsterSkin>();
     public List<Skin> skins { get; set; } = new List<Skin>();
     public List<Character> characters { get; set; } = new List<Character>();
     public string heroParamData { get; set; }
-    public IdDump()
+    public IdDump(string output = "")
     {
+        this.output = output != "" ? output : AppDomain.CurrentDomain.BaseDirectory;
+        
         var monsterTask = Helper.DownloadDataAsync(monsterSkinUrl, "monster skin data");
         var skinTask = Helper.DownloadDataAsync(skinUrl, "arcanist skin data");
         var characterTask = Helper.DownloadDataAsync(characterUrl, "arcanist data");
@@ -47,7 +50,7 @@ public class IdDump {
             Console.WriteLine("Failed to get character data.");
     }
 
-    public void GenerateArcanistMap(string outputFile)
+    public void GenerateArcanistMap()
     {
         var arcanistMap = new List<ArcanistMap>();
         
@@ -85,11 +88,11 @@ public class IdDump {
         }
         
         string json = JsonConvert.SerializeObject(arcanistMap, Formatting.Indented);
-        File.WriteAllText(outputFile, json);
-        Console.WriteLine($"Generated arcanist map -> {outputFile}");
+        Helper.CreateFileWithFolders($"{output}/ArcanistMap.json", json);
+        Console.WriteLine($"Generated arcanist map -> {output}/ArcanistMap.json");
     }
 
-    public void GenerateGeneralMap(string outputFile)
+    public void GenerateGeneralMap()
     {
         var generalMap = new List<GeneralMap>();
         
@@ -107,11 +110,11 @@ public class IdDump {
            }
         
         string json = JsonConvert.SerializeObject(generalMap, Formatting.Indented);
-        File.WriteAllText(outputFile, json);
-        Console.WriteLine($"Generated general map -> {outputFile}");
+        Helper.CreateFileWithFolders($"{output}/GeneralMap.json", json);
+        Console.WriteLine($"Generated arcanist map -> {output}/GeneralMap.json");
     }
 
-    public void GenerateStorySpriteMap(string outputFile)
+    public void GenerateStorySpriteMap()
     {
         var storySpriteMaps = new List<StorySpriteMap>();
 
@@ -138,8 +141,8 @@ public class IdDump {
         }
         
         string json = JsonConvert.SerializeObject(storySpriteMaps, Formatting.Indented);
-        File.WriteAllText(outputFile, json);
-        Console.WriteLine($"Generated story spirte map -> {outputFile}");
+        Helper.CreateFileWithFolders($"{output}/StorySpriteMap.json", json);
+        Console.WriteLine($"Generated story spirte map -> {output}/StorySpriteMap.json");
     }
 
     
