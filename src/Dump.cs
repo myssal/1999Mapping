@@ -6,8 +6,6 @@ using Newtonsoft.Json;
 
 public class IdDump {
     private const string baseUrl = "https://github.com/myssal/Reverse-1999-CN-Asset/tree/master";
-    private const string cubismUri = @"live2d/roles";
-    private const string spineUri = @"roles";
     
     private const string monsterSkinUrl = "https://raw.githubusercontent.com/St-Pavlov-Foundation/re1999-data/main/data/json/monster_skin.json";
     private const string skinUrl = "https://raw.githubusercontent.com/St-Pavlov-Foundation/re1999-data/main/data/json/skin.json";
@@ -81,7 +79,7 @@ public class IdDump {
                 name = character.name,
                 nameEng = character.nameEng,
                 roleBirthday = character.roleBirthday,
-                signature = character.signature,
+                signature = $"{baseUrl}/singlebg/signature/{character.signature}.png",
                 live2d = live2dList
             });
         }
