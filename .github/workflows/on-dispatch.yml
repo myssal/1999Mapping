@@ -1,0 +1,53 @@
+name: Generate Maps and Push to Asset Repo
+
+on:
+  repository_dispatch:
+    types: [upstream_update]
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout this repo
+        uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.x'
+
+      - name: Restore and build
+        run: |
+          dotnet restore
+          dotnet build --configuration Release
+
+      - name: Run the project to generate JSON
+        run: dotnet run --configuration Release
+
+      - name: Sparse checkout of Reverse-1999-CN-Asset
+        run: |
+          mkdir asset-repo
+          cd asset-repo
+          git init
+          git remote add origin https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/myssal/Reverse-1999-CN-Asset.git
+          git config core.sparseCheckout true
+          echo "ArcanistMap.json" >> .git/info/sparse-checkout
+          echo "GeneralMap.json" >> .git/info/sparse-checkout
+          echo "StorySpriteMap.json" >> .git/info/sparse-checkout
+          git pull --depth=1 origin main
+
+      - name: Copy output files
+        run: |
+          cp ArcanistMap.json asset-repo/
+          cp GeneralMap.json asset-repo/
+          cp StorySpriteMap.json asset-repo/
+
+      - name: Commit and push to asset repo
+        run: |
+          cd asset-repo
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add ArcanistMap.json GeneralMap.json StorySpriteMap.json
+          git commit -m "Auto-update generated JSON files" || echo "No changes to commit"
+          git push

@@ -87,7 +87,7 @@ public class IdDump {
         }
         
         string json = JsonConvert.SerializeObject(arcanistMap, Formatting.Indented);
-        Helper.CreateFileWithFolders(outputFile, json);
+        File.WriteAllText(outputFile, json);
     }
 
     public void GenerateGeneralMap(string outputFile)
@@ -108,7 +108,7 @@ public class IdDump {
            }
         
         string json = JsonConvert.SerializeObject(generalMap, Formatting.Indented);
-        Helper.CreateFileWithFolders(outputFile, json);
+        File.WriteAllText(outputFile, json);
     }
 
     public void GenerateStorySpriteMap(string outputFile)
@@ -138,7 +138,7 @@ public class IdDump {
         }
         
         string json = JsonConvert.SerializeObject(result, Formatting.Indented);
-        Helper.CreateFileWithFolders(outputFile, json);
+        File.WriteAllText(outputFile, json);
     }
 
     public static string ConvertAlternateSpine(string prefabPath)
