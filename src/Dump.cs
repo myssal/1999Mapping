@@ -70,8 +70,8 @@ public class IdDump {
                     characterSkin = skin.characterSkin,
                     characterSkinNameEng = skin.characterSkinNameEng,
                     skinDescription = skin.skinDescription,
-                    cubism = $"{baseUrl}/roles/{Helper.RemoveAfterSlash(skin.spine, baseUrl)}",
-                    spine = $"{baseUrl}/live2d/roles/{Helper.RemoveAfterSlash(skin.cubism, baseUrl)}",
+                    cubism = $"{baseUrl}/live2d/roles/{Helper.RemoveAfterSlash(skin.cubism, baseUrl)}",
+                    spine = $"{baseUrl}/roles/{Helper.RemoveAfterSlash(skin.spine, baseUrl)}",
                     alternateSpine = $"{baseUrl}/roles/{Helper.RemoveAfterSlash(skin.alternateSpine, baseUrl)}"
                 });
             }

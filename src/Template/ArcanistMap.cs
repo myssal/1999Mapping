@@ -21,7 +21,7 @@ public class Live2d
     [JsonProperty("characterSkin")] public string characterSkin { get; set; }
     [JsonProperty("characterSkinNameEng")] public string characterSkinNameEng { get; set; }
     [JsonProperty("skinDescription")] public string skinDescription { get; set; }
-    [JsonProperty("cubism")] public string cubism { get; set; }
     [JsonProperty("spine")] public string spine { get; set; }
+    [JsonProperty("cubism")] public string cubism { get; set; }
     [JsonProperty("alternateSpine")] public string alternateSpine { get; set; }
 }
